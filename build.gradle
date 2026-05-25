@@ -1,0 +1,102 @@
+plugins {
+    id 'java-library'
+}
+
+group   = 'com.cloudpostoffice'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.5'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// ── Integration tests source set ──────────────────────────────────────────────
+
+sourceSets {
+    integrationTest {
+        java {
+            srcDirs = ['tests']
+        }
+        compileClasspath += sourceSets.main.output + configurations.runtimeClasspath
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+configurations {
+    integrationTestImplementation.extendsFrom implementation
+    integrationTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+// ── Run tasks for each integration test ───────────────────────────────────────
+
+task runPostbox1(type: JavaExec) {
+    group       = 'Integration Tests'
+    description = 'Run Postbox1Main — sends a direct message to postbox-2'
+    dependsOn compileIntegrationTestJava
+    classpath  = sourceSets.integrationTest.runtimeClasspath
+    mainClass  = 'com.cloudpostoffice.tests.Postbox1Main'
+    standardInput = System.in
+}
+
+task runPostbox2(type: JavaExec) {
+    group       = 'Integration Tests'
+    description = 'Run Postbox2Main — listens for direct messages (run before runPostbox1)'
+    dependsOn compileIntegrationTestJava
+    classpath  = sourceSets.integrationTest.runtimeClasspath
+    mainClass  = 'com.cloudpostoffice.tests.Postbox2Main'
+    standardInput = System.in
+}
+
+task runPub(type: JavaExec) {
+    group       = 'Integration Tests'
+    description = 'Run PubMain — publishes to a topic'
+    dependsOn compileIntegrationTestJava
+    classpath  = sourceSets.integrationTest.runtimeClasspath
+    mainClass  = 'com.cloudpostoffice.tests.PubMain'
+    standardInput = System.in
+}
+
+task runSub(type: JavaExec) {
+    group       = 'Integration Tests'
+    description = 'Run SubMain — subscribes to a topic (run before runPub)'
+    dependsOn compileIntegrationTestJava
+    classpath  = sourceSets.integrationTest.runtimeClasspath
+    mainClass  = 'com.cloudpostoffice.tests.SubMain'
+    standardInput = System.in
+}
+
+task runUnauth(type: JavaExec) {
+    group       = 'Integration Tests'
+    description = 'Run UnauthMain — security test: broker must reject cross-project publish'
+    dependsOn compileIntegrationTestJava
+    classpath  = sourceSets.integrationTest.runtimeClasspath
+    mainClass  = 'com.cloudpostoffice.tests.UnauthMain'
+    standardInput = System.in
+}
+
+task runAll(type: JavaExec) {
+    group       = 'Integration Tests'
+    description = 'Run RunAll — orchestrates all integration tests'
+    dependsOn compileIntegrationTestJava
+    classpath  = sourceSets.integrationTest.runtimeClasspath
+    mainClass  = 'com.cloudpostoffice.tests.RunAll'
+    standardInput = System.in
+    // Pass classpath as system property so RunAll can spawn child processes
+    jvmArgs "-Dintegration.classpath=${sourceSets.integrationTest.runtimeClasspath.asPath}"
+}
