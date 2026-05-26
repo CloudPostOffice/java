@@ -15,9 +15,9 @@ import com.cloudpostoffice.Postbox;
 public class Postbox2Main {
 
     public static void main(String[] args) throws InterruptedException {
-        String baseUrl       = Postbox1Main.envOrDefault("CPO_BASE_URL", "http://localhost:3000");
-        String postboxId     = Postbox1Main.requireEnv("CPO_TEST_POSTBOX_2_ID");
-        String postboxSecret = Postbox1Main.requireEnv("CPO_TEST_POSTBOX_2_SECRET");
+        String baseUrl       = TestEnv.envOrDefault("CPO_BASE_URL", "http://localhost:3000");
+        String postboxId     = TestEnv.requireEnv("CPO_TEST_POSTBOX_2_ID");
+        String postboxSecret = TestEnv.requireEnv("CPO_TEST_POSTBOX_2_SECRET");
 
         CloudPostOffice.configure(new CloudPostOffice.Config(baseUrl));
 

@@ -15,10 +15,10 @@ import com.cloudpostoffice.Postbox;
 public class Postbox1Main {
 
     public static void main(String[] args) {
-        String baseUrl        = envOrDefault("CPO_BASE_URL", "http://localhost:3000");
-        String postboxId      = requireEnv("CPO_TEST_POSTBOX_1_ID");
-        String postboxSecret  = requireEnv("CPO_TEST_POSTBOX_1_SECRET");
-        String targetId       = requireEnv("CPO_TEST_POSTBOX_2_ID");
+        String baseUrl        = TestEnv.envOrDefault("CPO_BASE_URL", "http://localhost:3000");
+        String postboxId      = TestEnv.requireEnv("CPO_TEST_POSTBOX_1_ID");
+        String postboxSecret  = TestEnv.requireEnv("CPO_TEST_POSTBOX_1_SECRET");
+        String targetId       = TestEnv.requireEnv("CPO_TEST_POSTBOX_2_ID");
 
         CloudPostOffice.configure(new CloudPostOffice.Config(baseUrl));
 
@@ -34,17 +34,4 @@ public class Postbox1Main {
         }
     }
 
-    static String envOrDefault(String key, String def) {
-        String v = System.getenv(key);
-        return (v != null && !v.isEmpty()) ? v : def;
-    }
-
-    static String requireEnv(String key) {
-        String v = System.getenv(key);
-        if (v == null || v.isEmpty()) {
-            System.err.println("Required env var " + key + " is not set");
-            System.exit(1);
-        }
-        return v;
-    }
 }

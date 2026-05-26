@@ -42,9 +42,9 @@ public class UnauthMain {
             .build();
 
     public static void main(String[] args) throws Exception {
-        String baseUrl       = Postbox1Main.envOrDefault("CPO_BASE_URL", "http://localhost:3000");
-        String postboxId     = Postbox1Main.requireEnv("CPO_TEST_POSTBOX_1_ID");
-        String postboxSecret = Postbox1Main.requireEnv("CPO_TEST_POSTBOX_1_SECRET");
+        String baseUrl       = TestEnv.envOrDefault("CPO_BASE_URL", "http://localhost:3000");
+        String postboxId     = TestEnv.requireEnv("CPO_TEST_POSTBOX_1_ID");
+        String postboxSecret = TestEnv.requireEnv("CPO_TEST_POSTBOX_1_SECRET");
 
         System.out.println("Authenticating as: " + postboxId);
         Map<String, Object> auth = authenticate(baseUrl, postboxId, postboxSecret);
